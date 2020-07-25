@@ -45,14 +45,49 @@ namespace wEventLogSearch
                 return;
             }
             int recordCount = 0;
-            string searchString = "*[System[(EventID=" + txtBoxEventID.Text + ")]]";
+            string searchString = "*";
+
             string directorypath = TxtBoxEvtFpath.Text;
             string writeOutputpath = TxtBoxOutput.Text;
             string filterText = txtboxFilter.Text;
+            bool boolGroupProperties = false;
+
+            if (chkGroupProperties.Checked == true)
+            {
+                boolGroupProperties = true;
+            }
+
+            //set filters for query
+            if (txtBoxEventID.Text != "" && txtBoxEventID.Text != "*")
+            {
+                searchString = "*[System[(EventID=" + txtBoxEventID.Text + ")" ;
+            }
+            if (txtBoxTimeDiff.Text != "")
+            {
+                long timeFilter = 0;
+                string timeDiff = txtBoxTimeDiff.Text;
+                bool canConvert = long.TryParse(timeDiff, out timeFilter);
+                if (canConvert == true)
+                {
+                    if (searchString.Contains("*[System["))
+                    {
+                        searchString = searchString + " and TimeCreated[timediff(@SystemTime) &lt;= " + timeFilter.ToString() + "]";
+                    }
+                    else if(searchString.Contains("*") || searchString == "")
+                    {
+                        searchString = "*[System[TimeCreated[timediff(@SystemTime) <= " + timeFilter.ToString() + "]";
+                    }
+                }
+            }
+            if (searchString.Contains("*[System["))
+            {
+                searchString = searchString + "]]";
+                    }
+
             if (radioFileFolder1.Checked == true)
             {
                 List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(TxtBoxEvtFpath.Text, searchString);
-                recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText);
+                recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
 
                 lblResults.Text = $"{recordCount} results were returned";
             }
@@ -63,7 +98,7 @@ namespace wEventLogSearch
                 foreach (string fileName in fileEntries)
                 {
                     List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(fileName, searchString);
-                    recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText);
+                    recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
                     recordsCount = recordsCount + recordCount;
                 }
                 lblResults.Text = $"{recordsCount} results were returned";
@@ -123,6 +158,11 @@ namespace wEventLogSearch
         }
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void label5_Click(object sender, EventArgs e)
         {
 
         }

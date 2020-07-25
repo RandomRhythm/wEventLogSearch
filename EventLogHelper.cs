@@ -31,12 +31,20 @@ namespace wEventLogSearch
             return results;
         }
 
-        public static int WriteEventRecords(List<EventRecord> records, string outputPath, string filterText)
+        public static int WriteEventRecords(List<EventRecord> records, string outputPath, string filterText, bool removeCrLf, bool groupProperties)
         {
             int recordsWritten = 0;
             string separateChar = "|";
+
             if (outputPath.Substring(outputPath.Length - 3, 3) == "csv")
+            {
                 separateChar = ",";
+            }
+            string propSeparateChar = separateChar;
+            if (groupProperties == true)
+            {
+                propSeparateChar = " ";
+            }
             foreach (EventRecord eventdetail in records)
             {
                 string lineOutput = "";
@@ -68,11 +76,21 @@ namespace wEventLogSearch
                     }
                     if (lineOutput == "")
                     {
-                        lineOutput = eventdetail.Id + separateChar + eventdetail.MachineName + separateChar + tmpPropValue;
+                        try
+                        {
+                            if (!string.IsNullOrEmpty(eventdetail.TaskDisplayName))
+                            {
+                                lineOutput = eventdetail.TimeCreated + separateChar + eventdetail.MachineName + separateChar + eventdetail.UserId + separateChar + eventdetail.Id + separateChar + eventdetail.ProviderName + separateChar + eventdetail.TaskDisplayName + separateChar + eventdetail.FormatDescription().Replace("\n", " ").Replace("\r", " ").Replace(",", " ") + separateChar + tmpPropValue.Replace(",", " ");
+                            }
+                        }
+                        catch
+                        {
+
+                        }
                     }
-                    else
+                    else //already populated line out. Append with propSeparateChar
                     {
-                        lineOutput = lineOutput + separateChar + tmpPropValue;
+                        lineOutput = lineOutput + propSeparateChar + tmpPropValue.Replace(","," ");
                     }
                 }
                 if (!string.IsNullOrWhiteSpace(filterText) )
@@ -82,7 +100,11 @@ namespace wEventLogSearch
                         skipEntry = true;
                     }
                 }
-                if (skipEntry == false && Directory.Exists(Path.GetDirectoryName(outputPath)))//make sure directory was not provided
+                if (removeCrLf == true)
+                {
+                    lineOutput = lineOutput.Replace("\n", "");
+                }
+                if (skipEntry == false && Directory.Exists(Path.GetDirectoryName(outputPath)) && lineOutput != "")//make sure directory was not provided
                 {
                     bool written = false;
                     while (written == false) //AV locks file so we are just going to loop here
@@ -91,7 +113,7 @@ namespace wEventLogSearch
                     
                         try
                         {
-                            File.AppendAllText(outputPath, eventdetail.TimeCreated.Value.ToString() + separateChar + lineOutput + "\n");
+                            File.AppendAllText(outputPath, lineOutput + "\n");
                                 written = true;
                             }
                         catch(IOException e)
