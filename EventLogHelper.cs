@@ -30,7 +30,35 @@ namespace wEventLogSearch
 
             return results;
         }
+        public static int SearchEventLog(string logLocation, string query,string writeOutputpath, string filterText, bool boolGroupProperties)
+        {
+            FileInfo info = new FileInfo(logLocation);
+            List<EventRecord> results = new List<EventRecord>();
+            int recordCount = 0;
+            if (info.Length > 800000000) //clipping level to avoid running out of memory
+            {
 
+                
+                EventLogQuery eventsQuery = new EventLogQuery(logLocation, PathType.FilePath, query);
+                EventLogReader logReader = new EventLogReader(eventsQuery);
+                
+                for (EventRecord eventdetail = logReader.ReadEvent(); eventdetail != null; eventdetail = logReader.ReadEvent())
+                {
+
+
+                    results.Add(eventdetail);
+                    EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties);
+                    recordCount += 1;
+                    results.Clear();
+                }
+                return recordCount;
+            }
+            else {
+                results = SearchEventLogs(logLocation, query);
+                recordCount = EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties);
+                return recordCount;
+            }
+        }
         public static int WriteEventRecords(List<EventRecord> records, string outputPath, string filterText, bool removeCrLf, bool groupProperties)
         {
             int recordsWritten = 0;
@@ -80,7 +108,8 @@ namespace wEventLogSearch
                         {
                             if (!string.IsNullOrEmpty(eventdetail.TaskDisplayName))
                             {
-                                lineOutput = eventdetail.TimeCreated + separateChar + eventdetail.MachineName + separateChar + eventdetail.UserId + separateChar + eventdetail.Id + separateChar + eventdetail.ProviderName + separateChar + eventdetail.TaskDisplayName + separateChar + eventdetail.FormatDescription().Replace("\n", " ").Replace("\r", " ").Replace(",", " ") + separateChar + tmpPropValue.Replace(",", " ");
+                                //DateTime, Computer, User, EventID, Provider, TaskName, Description, Properties
+                                lineOutput = eventdetail.TimeCreated + separateChar + eventdetail.MachineName + separateChar + eventdetail.UserId + separateChar + eventdetail.Id + separateChar + eventdetail.ProviderName.Replace(separateChar, " ") + separateChar + eventdetail.TaskDisplayName.Replace(separateChar, " ") + separateChar + eventdetail.FormatDescription().Replace("\n", " ").Replace("\r", " ").Replace(separateChar, " ") + separateChar + tmpPropValue.Replace(separateChar, " ");
                             }
                         }
                         catch

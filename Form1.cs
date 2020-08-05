@@ -86,9 +86,9 @@ namespace wEventLogSearch
 
             if (radioFileFolder1.Checked == true)
             {
-                List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(TxtBoxEvtFpath.Text, searchString);
-                recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
-
+                //List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(TxtBoxEvtFpath.Text, searchString);
+                //recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
+                recordCount = EventLogHelper.SearchEventLog(TxtBoxEvtFpath.Text, searchString, writeOutputpath, filterText, boolGroupProperties);
                 lblResults.Text = $"{recordCount} results were returned";
             }
             else
@@ -97,8 +97,9 @@ namespace wEventLogSearch
                 string[] fileEntries = Directory.GetFiles(directorypath);
                 foreach (string fileName in fileEntries)
                 {
-                    List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(fileName, searchString);
-                    recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
+                    //List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(fileName, searchString);
+                    //recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
+                    recordCount = EventLogHelper.SearchEventLog(fileName, searchString, writeOutputpath, filterText, boolGroupProperties);
                     recordsCount = recordsCount + recordCount;
                 }
                 lblResults.Text = $"{recordsCount} results were returned";
