@@ -16,21 +16,39 @@ namespace wEventLogSearch
     {
         public static List<EventRecord> SearchEventLogs(string logLocation, string query)
         {
+
             List<EventRecord> results = new List<EventRecord>();
-            EventLogQuery eventsQuery = new EventLogQuery(logLocation, PathType.FilePath, query);
-
-            //try	{
-            EventLogReader logReader = new EventLogReader(eventsQuery);
-            for (EventRecord eventdetail = logReader.ReadEvent(); eventdetail != null; eventdetail = logReader.ReadEvent())
+            try
             {
-                results.Add(eventdetail);
+                EventLogQuery eventsQuery = new EventLogQuery(logLocation, PathType.FilePath, query);
 
+
+                EventLogReader logReader = new EventLogReader(eventsQuery);
+                for (EventRecord eventdetail = logReader.ReadEvent(); eventdetail != null; eventdetail = logReader.ReadEvent())
+                {
+                    results.Add(eventdetail);
+
+                }
             }
-            //} catch (EventLogNotFoundException e) { string errorString = e.ToString(); }
+            catch (EventLogNotFoundException e)
+            {
+                string errorString = e.ToString();
+                File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "\\error.log", logLocation + "|" + query + "|" + errorString + "\n");
+            }
+            catch (EventLogException e)
+            {
+                string errorString = e.ToString();
+                File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "\\error.log", logLocation + "|" + query + "|" + errorString + "\n");
+            }
+            catch (Exception e)
+            {
+                string errorString = e.ToString();
+                File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "\\error.log", logLocation + "|" + query + "|" + errorString + "\n");
+            }
 
             return results;
         }
-        public static int SearchEventLog(string logLocation, string query,string writeOutputpath, string filterText, bool boolGroupProperties)
+        public static int SearchEventLog(string logLocation, string query, string writeOutputpath, string filterText, bool boolGroupProperties)
         {
             FileInfo info = new FileInfo(logLocation);
             List<EventRecord> results = new List<EventRecord>();
@@ -38,22 +56,30 @@ namespace wEventLogSearch
             if (info.Length > 800000000) //clipping level to avoid running out of memory
             {
 
-                
-                EventLogQuery eventsQuery = new EventLogQuery(logLocation, PathType.FilePath, query);
-                EventLogReader logReader = new EventLogReader(eventsQuery);
-                
-                for (EventRecord eventdetail = logReader.ReadEvent(); eventdetail != null; eventdetail = logReader.ReadEvent())
+                try
                 {
+                    EventLogQuery eventsQuery = new EventLogQuery(logLocation, PathType.FilePath, query);
+                    EventLogReader logReader = new EventLogReader(eventsQuery);
+
+                    for (EventRecord eventdetail = logReader.ReadEvent(); eventdetail != null; eventdetail = logReader.ReadEvent())
+                    {
 
 
-                    results.Add(eventdetail);
-                    EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties);
-                    recordCount += 1;
-                    results.Clear();
+                        results.Add(eventdetail);
+                        EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties);
+                        recordCount += 1;
+                        results.Clear();
+                    }
+                }
+                catch (EventLogNotFoundException e)
+                {
+                    string errorString = e.ToString();
+                    File.AppendAllText(AppDomain.CurrentDomain.BaseDirectory + "\\error.log", logLocation + "|" + query + "|" + errorString + "\n");
                 }
                 return recordCount;
             }
-            else {
+            else
+            {
                 results = SearchEventLogs(logLocation, query);
                 recordCount = EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties);
                 return recordCount;
@@ -106,11 +132,14 @@ namespace wEventLogSearch
                     {
                         try
                         {
+                            string strTaskName = "";
                             if (!string.IsNullOrEmpty(eventdetail.TaskDisplayName))
                             {
-                                //DateTime, Computer, User, EventID, Provider, TaskName, Description, Properties
-                                lineOutput = eventdetail.TimeCreated + separateChar + eventdetail.MachineName + separateChar + eventdetail.UserId + separateChar + eventdetail.Id + separateChar + eventdetail.ProviderName.Replace(separateChar, " ") + separateChar + eventdetail.TaskDisplayName.Replace(separateChar, " ") + separateChar + eventdetail.FormatDescription().Replace("\n", " ").Replace("\r", " ").Replace(separateChar, " ") + separateChar + tmpPropValue.Replace(separateChar, " ");
+                                strTaskName = eventdetail.TaskDisplayName.Replace(separateChar, " ");
                             }
+                            //DateTime, Computer, User, EventID, Provider, TaskName, Description, Properties
+                            lineOutput = eventdetail.TimeCreated + separateChar + eventdetail.MachineName + separateChar + eventdetail.UserId + separateChar + eventdetail.Id + separateChar + eventdetail.ProviderName.Replace(separateChar, " ") + separateChar + strTaskName + separateChar + eventdetail.FormatDescription().Replace("\n", " ").Replace("\r", " ").Replace(separateChar, " ") + separateChar + tmpPropValue.Replace("\n", " ").Replace("\r", " ").Replace(separateChar, " ");
+
                         }
                         catch
                         {
@@ -119,10 +148,10 @@ namespace wEventLogSearch
                     }
                     else //already populated line out. Append with propSeparateChar
                     {
-                        lineOutput = lineOutput + propSeparateChar + tmpPropValue.Replace(","," ");
+                        lineOutput = lineOutput + propSeparateChar + tmpPropValue.Replace(",", " ");
                     }
                 }
-                if (!string.IsNullOrWhiteSpace(filterText) )
+                if (!string.IsNullOrWhiteSpace(filterText))
                 {
                     if (!lineOutput.ToLower().Contains(filterText.ToLower()))
                     {
@@ -131,7 +160,7 @@ namespace wEventLogSearch
                 }
                 if (removeCrLf == true)
                 {
-                    lineOutput = lineOutput.Replace("\n", "");
+                    lineOutput = lineOutput.Replace("\n", "").Replace("\r", "");
                 }
                 if (skipEntry == false && Directory.Exists(Path.GetDirectoryName(outputPath)) && lineOutput != "")//make sure directory was not provided
                 {
@@ -139,13 +168,13 @@ namespace wEventLogSearch
                     while (written == false) //AV locks file so we are just going to loop here
                     {
 
-                    
+
                         try
                         {
                             File.AppendAllText(outputPath, lineOutput + "\n");
-                                written = true;
-                            }
-                        catch(IOException e)
+                            written = true;
+                        }
+                        catch (IOException e)
                         {
                             var errorCode = Marshal.GetHRForException(e) & ((1 << 16) - 1);
 
@@ -156,7 +185,7 @@ namespace wEventLogSearch
                             }
                         }
 
-                        
+
                     }
                     if (File.Exists(outputPath))
                     {
@@ -199,11 +228,11 @@ namespace wEventLogSearch
                         {
                             strBytes = strBytes + "." + testByte[i].ToString();
                         }
-                        
+
                     }
                     return strBytes.Replace(".0.0.0.0.0.0.0.0", "") + ":" + strPort; //ip address and port
                 }
-               
+
             }
             return "";
         }
