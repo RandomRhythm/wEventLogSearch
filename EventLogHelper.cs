@@ -48,7 +48,7 @@ namespace wEventLogSearch
 
             return results;
         }
-        public static int SearchEventLog(string logLocation, string query, string writeOutputpath, string filterText, bool boolGroupProperties)
+        public static int SearchEventLog(string logLocation, string query, string writeOutputpath, string filterText, bool boolGroupProperties, string strValueLocations,bool boolIncludeLogSourceData)
         {
             FileInfo info = new FileInfo(logLocation);
             List<EventRecord> results = new List<EventRecord>();
@@ -66,7 +66,7 @@ namespace wEventLogSearch
 
 
                         results.Add(eventdetail);
-                        EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties);
+                        EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties, strValueLocations, boolIncludeLogSourceData);
                         recordCount += 1;
                         results.Clear();
                     }
@@ -81,11 +81,11 @@ namespace wEventLogSearch
             else
             {
                 results = SearchEventLogs(logLocation, query);
-                recordCount = EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties);
+                recordCount = EventLogHelper.WriteEventRecords(results, writeOutputpath, filterText, true, boolGroupProperties, strValueLocations, boolIncludeLogSourceData);
                 return recordCount;
             }
         }
-        public static int WriteEventRecords(List<EventRecord> records, string outputPath, string filterText, bool removeCrLf, bool groupProperties)
+        public static int WriteEventRecords(List<EventRecord> records, string outputPath, string filterText, bool removeCrLf, bool groupProperties, string strValLocations, bool boolWriteLogSourceData)
         {
             int recordsWritten = 0;
             string separateChar = "|";
@@ -99,12 +99,31 @@ namespace wEventLogSearch
             {
                 propSeparateChar = " ";
             }
+            string[] lstValLocations;
+            if (strValLocations.Contains(","))
+            {
+                lstValLocations = strValLocations.Split(',');
+            }
+            else
+            {
+                lstValLocations = new String[1];
+                lstValLocations[0] = strValLocations;
+            }
             foreach (EventRecord eventdetail in records)
             {
+
+
                 string lineOutput = "";
                 bool skipEntry = false;
                 for (int intProperty = 0; intProperty < eventdetail.Properties.Count; intProperty++)
                 {
+                    if (strValLocations != "")
+                    {
+                        if (!lstValLocations.Contains(intProperty.ToString())) //skip any value locations that were not specified to output
+                            {
+                            continue;
+                        }
+                    }
                     string tmpPropValue = "";
                     skipEntry = false;
                     if (eventdetail.Properties[intProperty].Value.GetType().Equals(typeof(byte[])))
@@ -128,7 +147,7 @@ namespace wEventLogSearch
                     {
                         tmpPropValue = tmpPropValue.Replace(System.Environment.NewLine, " ^ ");
                     }
-                    if (lineOutput == "")
+                    if (lineOutput == "" && boolWriteLogSourceData == true)
                     {
                         try
                         {
@@ -146,7 +165,11 @@ namespace wEventLogSearch
 
                         }
                     }
-                    else //already populated line out. Append with propSeparateChar
+                    else if (lineOutput == "")
+                    {
+                        lineOutput = tmpPropValue.Replace(",", " ");
+                    }
+                        else //already populated line out. Append with propSeparateChar
                     {
                         lineOutput = lineOutput + propSeparateChar + tmpPropValue.Replace(",", " ");
                     }

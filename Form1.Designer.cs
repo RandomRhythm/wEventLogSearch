@@ -47,112 +47,104 @@
             this.chkGroupProperties = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.txtBoxTimeDiff = new System.Windows.Forms.TextBox();
+            this.txtValueLocations = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.chkIncludeLogSource = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // BtnSearch
             // 
-            this.BtnSearch.Location = new System.Drawing.Point(157, 338);
-            this.BtnSearch.Margin = new System.Windows.Forms.Padding(4);
+            this.BtnSearch.Location = new System.Drawing.Point(91, 285);
             this.BtnSearch.Name = "BtnSearch";
-            this.BtnSearch.Size = new System.Drawing.Size(100, 28);
-            this.BtnSearch.TabIndex = 0;
+            this.BtnSearch.Size = new System.Drawing.Size(75, 23);
+            this.BtnSearch.TabIndex = 22;
             this.BtnSearch.Text = "Search";
             this.BtnSearch.UseVisualStyleBackColor = true;
             this.BtnSearch.Click += new System.EventHandler(this.BtnSearch_Click);
             // 
             // txtBoxEventID
             // 
-            this.txtBoxEventID.Location = new System.Drawing.Point(108, 53);
-            this.txtBoxEventID.Margin = new System.Windows.Forms.Padding(4);
+            this.txtBoxEventID.Location = new System.Drawing.Point(81, 43);
             this.txtBoxEventID.Name = "txtBoxEventID";
-            this.txtBoxEventID.Size = new System.Drawing.Size(659, 22);
+            this.txtBoxEventID.Size = new System.Drawing.Size(495, 20);
             this.txtBoxEventID.TabIndex = 1;
             this.txtBoxEventID.Text = "4689 or EventID=4688";
             // 
             // TxtBoxEvtFpath
             // 
-            this.TxtBoxEvtFpath.Location = new System.Drawing.Point(43, 132);
-            this.TxtBoxEvtFpath.Margin = new System.Windows.Forms.Padding(4);
+            this.TxtBoxEvtFpath.Location = new System.Drawing.Point(32, 107);
             this.TxtBoxEvtFpath.Name = "TxtBoxEvtFpath";
-            this.TxtBoxEvtFpath.Size = new System.Drawing.Size(724, 22);
-            this.TxtBoxEvtFpath.TabIndex = 2;
+            this.TxtBoxEvtFpath.Size = new System.Drawing.Size(544, 20);
+            this.TxtBoxEvtFpath.TabIndex = 4;
             this.TxtBoxEvtFpath.TextChanged += new System.EventHandler(this.TxtBoxEvtFpath_TextChanged);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(39, 112);
-            this.label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label1.Location = new System.Drawing.Point(29, 91);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(131, 17);
+            this.label1.Size = new System.Drawing.Size(100, 13);
             this.label1.TabIndex = 3;
             this.label1.Text = "Event Log File Path";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(39, 57);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label2.Location = new System.Drawing.Point(29, 46);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 17);
+            this.label2.Size = new System.Drawing.Size(52, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "EventID=";
             // 
             // TxtBoxOutput
             // 
-            this.TxtBoxOutput.Location = new System.Drawing.Point(157, 175);
-            this.TxtBoxOutput.Margin = new System.Windows.Forms.Padding(4);
+            this.TxtBoxOutput.Location = new System.Drawing.Point(118, 142);
             this.TxtBoxOutput.Name = "TxtBoxOutput";
-            this.TxtBoxOutput.Size = new System.Drawing.Size(609, 22);
-            this.TxtBoxOutput.TabIndex = 5;
+            this.TxtBoxOutput.Size = new System.Drawing.Size(458, 20);
+            this.TxtBoxOutput.TabIndex = 6;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(39, 178);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label3.Location = new System.Drawing.Point(29, 145);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(110, 17);
+            this.label3.Size = new System.Drawing.Size(83, 13);
             this.label3.TabIndex = 6;
             this.label3.Text = "Output File Path";
             // 
             // lblResults
             // 
             this.lblResults.AutoSize = true;
-            this.lblResults.Location = new System.Drawing.Point(280, 344);
-            this.lblResults.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblResults.Location = new System.Drawing.Point(183, 290);
             this.lblResults.Name = "lblResults";
-            this.lblResults.Size = new System.Drawing.Size(258, 17);
+            this.lblResults.Size = new System.Drawing.Size(195, 13);
             this.lblResults.TabIndex = 7;
             this.lblResults.Text = "Hit Search button when ready to search";
             // 
             // lblErrPath
             // 
             this.lblErrPath.AutoSize = true;
-            this.lblErrPath.Location = new System.Drawing.Point(280, 286);
-            this.lblErrPath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblErrPath.Location = new System.Drawing.Point(183, 270);
             this.lblErrPath.Name = "lblErrPath";
-            this.lblErrPath.Size = new System.Drawing.Size(0, 17);
+            this.lblErrPath.Size = new System.Drawing.Size(0, 13);
             this.lblErrPath.TabIndex = 8;
             // 
             // btnFilePath
             // 
-            this.btnFilePath.Location = new System.Drawing.Point(776, 130);
-            this.btnFilePath.Margin = new System.Windows.Forms.Padding(4);
+            this.btnFilePath.Location = new System.Drawing.Point(582, 106);
             this.btnFilePath.Name = "btnFilePath";
-            this.btnFilePath.Size = new System.Drawing.Size(100, 25);
-            this.btnFilePath.TabIndex = 9;
+            this.btnFilePath.Size = new System.Drawing.Size(75, 20);
+            this.btnFilePath.TabIndex = 5;
             this.btnFilePath.Text = "Browse";
             this.btnFilePath.UseVisualStyleBackColor = true;
             this.btnFilePath.Click += new System.EventHandler(this.btnFilePath_Click);
             // 
             // btnOutPath
             // 
-            this.btnOutPath.Location = new System.Drawing.Point(776, 175);
-            this.btnOutPath.Margin = new System.Windows.Forms.Padding(4);
+            this.btnOutPath.Location = new System.Drawing.Point(582, 142);
             this.btnOutPath.Name = "btnOutPath";
-            this.btnOutPath.Size = new System.Drawing.Size(100, 25);
-            this.btnOutPath.TabIndex = 10;
+            this.btnOutPath.Size = new System.Drawing.Size(75, 20);
+            this.btnOutPath.TabIndex = 7;
             this.btnOutPath.Text = "Browse";
             this.btnOutPath.UseVisualStyleBackColor = true;
             this.btnOutPath.Click += new System.EventHandler(this.btnOutPath_Click);
@@ -161,11 +153,10 @@
             // 
             this.radioFileFolder1.AutoSize = true;
             this.radioFileFolder1.Checked = true;
-            this.radioFileFolder1.Location = new System.Drawing.Point(180, 107);
-            this.radioFileFolder1.Margin = new System.Windows.Forms.Padding(4);
+            this.radioFileFolder1.Location = new System.Drawing.Point(135, 87);
             this.radioFileFolder1.Name = "radioFileFolder1";
-            this.radioFileFolder1.Size = new System.Drawing.Size(51, 21);
-            this.radioFileFolder1.TabIndex = 11;
+            this.radioFileFolder1.Size = new System.Drawing.Size(41, 17);
+            this.radioFileFolder1.TabIndex = 2;
             this.radioFileFolder1.TabStop = true;
             this.radioFileFolder1.Text = "File";
             this.radioFileFolder1.UseVisualStyleBackColor = true;
@@ -173,11 +164,10 @@
             // radioFileFolder2
             // 
             this.radioFileFolder2.AutoSize = true;
-            this.radioFileFolder2.Location = new System.Drawing.Point(243, 107);
-            this.radioFileFolder2.Margin = new System.Windows.Forms.Padding(4);
+            this.radioFileFolder2.Location = new System.Drawing.Point(182, 87);
             this.radioFileFolder2.Name = "radioFileFolder2";
-            this.radioFileFolder2.Size = new System.Drawing.Size(69, 21);
-            this.radioFileFolder2.TabIndex = 12;
+            this.radioFileFolder2.Size = new System.Drawing.Size(54, 17);
+            this.radioFileFolder2.TabIndex = 3;
             this.radioFileFolder2.Text = "Folder";
             this.radioFileFolder2.UseVisualStyleBackColor = true;
             // 
@@ -187,54 +177,87 @@
             // 
             // txtboxFilter
             // 
-            this.txtboxFilter.Location = new System.Drawing.Point(157, 231);
-            this.txtboxFilter.Margin = new System.Windows.Forms.Padding(4);
+            this.txtboxFilter.Location = new System.Drawing.Point(89, 190);
             this.txtboxFilter.Name = "txtboxFilter";
-            this.txtboxFilter.Size = new System.Drawing.Size(301, 22);
-            this.txtboxFilter.TabIndex = 13;
+            this.txtboxFilter.Size = new System.Drawing.Size(487, 20);
+            this.txtboxFilter.TabIndex = 10;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(40, 236);
-            this.label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.label4.Location = new System.Drawing.Point(30, 192);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(70, 17);
+            this.label4.Size = new System.Drawing.Size(53, 13);
             this.label4.TabIndex = 14;
             this.label4.Text = "Filter Text";
             // 
             // chkGroupProperties
             // 
             this.chkGroupProperties.AutoSize = true;
-            this.chkGroupProperties.Location = new System.Drawing.Point(159, 204);
+            this.chkGroupProperties.Location = new System.Drawing.Point(33, 167);
+            this.chkGroupProperties.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.chkGroupProperties.Name = "chkGroupProperties";
-            this.chkGroupProperties.Size = new System.Drawing.Size(269, 21);
-            this.chkGroupProperties.TabIndex = 15;
+            this.chkGroupProperties.Size = new System.Drawing.Size(203, 17);
+            this.chkGroupProperties.TabIndex = 8;
             this.chkGroupProperties.Text = "Group event properties in one column";
             this.chkGroupProperties.UseVisualStyleBackColor = true;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(40, 265);
+            this.label5.Location = new System.Drawing.Point(30, 246);
+            this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(201, 17);
+            this.label5.Size = new System.Drawing.Size(152, 13);
             this.label5.TabIndex = 16;
             this.label5.Text = "Time to go back in miliseconds";
             this.label5.Click += new System.EventHandler(this.label5_Click);
             // 
             // txtBoxTimeDiff
             // 
-            this.txtBoxTimeDiff.Location = new System.Drawing.Point(42, 286);
+            this.txtBoxTimeDiff.Location = new System.Drawing.Point(186, 243);
+            this.txtBoxTimeDiff.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.txtBoxTimeDiff.Name = "txtBoxTimeDiff";
-            this.txtBoxTimeDiff.Size = new System.Drawing.Size(199, 22);
+            this.txtBoxTimeDiff.Size = new System.Drawing.Size(150, 20);
             this.txtBoxTimeDiff.TabIndex = 17;
+            // 
+            // txtValueLocations
+            // 
+            this.txtValueLocations.Location = new System.Drawing.Point(186, 218);
+            this.txtValueLocations.Name = "txtValueLocations";
+            this.txtValueLocations.Size = new System.Drawing.Size(227, 20);
+            this.txtValueLocations.TabIndex = 13;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(30, 219);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(148, 13);
+            this.label6.TabIndex = 19;
+            this.label6.Text = "Output certain value locations";
+            // 
+            // chkIncludeLogSource
+            // 
+            this.chkIncludeLogSource.AutoSize = true;
+            this.chkIncludeLogSource.Checked = true;
+            this.chkIncludeLogSource.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkIncludeLogSource.Location = new System.Drawing.Point(241, 167);
+            this.chkIncludeLogSource.Margin = new System.Windows.Forms.Padding(2);
+            this.chkIncludeLogSource.Name = "chkIncludeLogSource";
+            this.chkIncludeLogSource.Size = new System.Drawing.Size(137, 17);
+            this.chkIncludeLogSource.TabIndex = 9;
+            this.chkIncludeLogSource.Text = "Include log source data";
+            this.chkIncludeLogSource.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(929, 440);
+            this.ClientSize = new System.Drawing.Size(697, 358);
+            this.Controls.Add(this.chkIncludeLogSource);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.txtValueLocations);
             this.Controls.Add(this.txtBoxTimeDiff);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.chkGroupProperties);
@@ -253,7 +276,6 @@
             this.Controls.Add(this.TxtBoxEvtFpath);
             this.Controls.Add(this.txtBoxEventID);
             this.Controls.Add(this.BtnSearch);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Event Log Parse To Text";
             this.Load += new System.EventHandler(this.Form1_Load);
@@ -283,6 +305,9 @@
         private System.Windows.Forms.CheckBox chkGroupProperties;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox txtBoxTimeDiff;
+        private System.Windows.Forms.TextBox txtValueLocations;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox chkIncludeLogSource;
     }
 }
 
