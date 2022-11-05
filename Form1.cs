@@ -45,14 +45,16 @@ namespace wEventLogSearch
                 return;
             }
             int i = 0;
-
-            string chars = txtValueLocations.Text.Replace(" ", "").Replace(",", "");
-            bool result = int.TryParse(chars, out i);
-            if (result == false)
+            if (txtValueLocations.Text != "")
             {
-                lblResults.Text = "Value locations must be an integer or comma seperated integer list" ;
-                lblErrPath.Text = txtValueLocations.Text;
-                return;
+                string chars = txtValueLocations.Text.Replace(" ", "").Replace(",", "");
+                bool result = int.TryParse(chars, out i);
+                if (result == false)
+                {
+                    lblResults.Text = "Value locations must be an integer or comma seperated integer list";
+                    lblErrPath.Text = txtValueLocations.Text;
+                    return;
+                }
             }
             int recordCount = 0;
             string searchString = "*";
