@@ -12,172 +12,153 @@ using System.Diagnostics.Eventing.Reader;
 
 namespace wEventLogSearch
 {
-    public partial class Form1 : Form
-    {
-        public Form1()
-        {
-            InitializeComponent();
-        }
+	public partial class Form1 : Form
+	{
+		public Form1()
+		{
+			InitializeComponent();
+		}
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
+		private void btnSearch_Click(object sender, EventArgs e)
+		{
+			lblErrPath.Text = "";
+			if (string.IsNullOrWhiteSpace(txtBoxEventID.ToString()))
+			{
+				lblResults.Text = "EventID can not be blank";
+				return;
+			}
+			if (!File.Exists(txtBoxEvtFpath.Text) && !Directory.Exists(txtBoxEvtFpath.Text))
+			{
+				lblResults.Text = "Input event log file or folder does not exist: ";
+				lblErrPath.Text = txtBoxEvtFpath.Text;
+				return;
+			}
+			if (!Directory.Exists(Path.GetDirectoryName(txtBoxOutput.Text)))
+			{
+				lblResults.Text = "Output directory does not exist: " + Path.GetDirectoryName(txtBoxOutput.Text);
+				lblErrPath.Text = txtBoxOutput.Text;
+				return;
+			}
+			int i = 0;
+			if (txtValueLocations.Text != "")
+			{
+				string chars = txtValueLocations.Text.Replace(" ", "").Replace(",", "");
+				bool result = int.TryParse(chars, out i);
+				if (result == false)
+				{
+					lblResults.Text = "Value locations must be an integer or comma seperated integer list";
+					lblErrPath.Text = txtValueLocations.Text;
+					return;
+				}
+			}
+			int recordCount = 0;
+			string searchString = "*";
 
-        }
+			string directorypath = txtBoxEvtFpath.Text;
+			string writeOutputpath = txtBoxOutput.Text;
+			string filterText = txtboxFilter.Text;
+			bool boolGroupProperties = false;
 
-        private void BtnSearch_Click(object sender, EventArgs e)
-        {
-            lblErrPath.Text = "";
-            if (string.IsNullOrWhiteSpace(txtBoxEventID.ToString()))
-            {
-                lblResults.Text = "EventID can not be blank";
-                return;
-            }
-            if (!File.Exists(TxtBoxEvtFpath.Text) && !Directory.Exists(TxtBoxEvtFpath.Text))
-            {
-                lblResults.Text = "Input event log file or folder does not exist: ";
-                lblErrPath.Text = TxtBoxEvtFpath.Text;
-                return;
-            }
-            if (!Directory.Exists(Path.GetDirectoryName(TxtBoxOutput.Text)))
-            {
-                lblResults.Text = "Output directory does not exist: " + Path.GetDirectoryName(TxtBoxOutput.Text);
-                lblErrPath.Text = TxtBoxOutput.Text;
-                return;
-            }
-            int i = 0;
-            if (txtValueLocations.Text != "")
-            {
-                string chars = txtValueLocations.Text.Replace(" ", "").Replace(",", "");
-                bool result = int.TryParse(chars, out i);
-                if (result == false)
-                {
-                    lblResults.Text = "Value locations must be an integer or comma seperated integer list";
-                    lblErrPath.Text = txtValueLocations.Text;
-                    return;
-                }
-            }
-            int recordCount = 0;
-            string searchString = "*";
+			if (chkGroupProperties.Checked == true)
+			{
+				boolGroupProperties = true;
+			}
 
-            string directorypath = TxtBoxEvtFpath.Text;
-            string writeOutputpath = TxtBoxOutput.Text;
-            string filterText = txtboxFilter.Text;
-            bool boolGroupProperties = false;
+			//set filters for query
+			if (txtBoxEventID.Text != "" && txtBoxEventID.Text != "*")
+			{
+				searchString = "*[System[(EventID=" + txtBoxEventID.Text + ")";
+			}
+			if (txtBoxTimeDiff.Text != "")
+			{
+				long timeFilter = 0;
+				string timeDiff = txtBoxTimeDiff.Text;
+				bool canConvert = long.TryParse(timeDiff, out timeFilter);
+				if (canConvert == true)
+				{
+					if (searchString.Contains("*[System["))
+					{
+						searchString = searchString + " and TimeCreated[timediff(@SystemTime) &lt;= " + timeFilter.ToString() + "]";
+					}
+					else if (searchString.Contains("*") || searchString == "")
+					{
+						searchString = "*[System[TimeCreated[timediff(@SystemTime) <= " + timeFilter.ToString() + "]";
+					}
+				}
+			}
+			if (searchString.Contains("*[System["))
+			{
+				searchString = searchString + "]]";
+			}
 
-            if (chkGroupProperties.Checked == true)
-            {
-                boolGroupProperties = true;
-            }
+			if (radioOptionFile.Checked == true)
+			{
+				//List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(TxtBoxEvtFpath.Text, searchString);
+				//recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
+				recordCount = EventLogHelper.SearchEventLog(txtBoxEvtFpath.Text, searchString, writeOutputpath, filterText, boolGroupProperties, txtValueLocations.Text, chkIncludeLogSource.Checked);
+				lblResults.Text = $"{recordCount} results were returned";
+			}
+			else
+			{
+				int recordsCount = 0;
+				string[] fileEntries = Directory.GetFiles(directorypath);
+				foreach (string fileName in fileEntries)
+				{
+					//List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(fileName, searchString);
+					//recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
+					recordCount = EventLogHelper.SearchEventLog(fileName, searchString, writeOutputpath, filterText, boolGroupProperties, txtValueLocations.Text, chkIncludeLogSource.Checked);
+					recordsCount = recordsCount + recordCount;
+				}
+				lblResults.Text = $"{recordsCount} results were returned";
+			}
+		}
 
-            //set filters for query
-            if (txtBoxEventID.Text != "" && txtBoxEventID.Text != "*")
-            {
-                searchString = "*[System[(EventID=" + txtBoxEventID.Text + ")" ;
-            }
-            if (txtBoxTimeDiff.Text != "")
-            {
-                long timeFilter = 0;
-                string timeDiff = txtBoxTimeDiff.Text;
-                bool canConvert = long.TryParse(timeDiff, out timeFilter);
-                if (canConvert == true)
-                {
-                    if (searchString.Contains("*[System["))
-                    {
-                        searchString = searchString + " and TimeCreated[timediff(@SystemTime) &lt;= " + timeFilter.ToString() + "]";
-                    }
-                    else if(searchString.Contains("*") || searchString == "")
-                    {
-                        searchString = "*[System[TimeCreated[timediff(@SystemTime) <= " + timeFilter.ToString() + "]";
-                    }
-                }
-            }
-            if (searchString.Contains("*[System["))
-            {
-                searchString = searchString + "]]";
-                    }
+		string lastInputDirectory = "C:\\";
+		string lastOutputDirectory = "C:\\";
 
-            if (radioFileFolder1.Checked == true)
-            {
-                //List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(TxtBoxEvtFpath.Text, searchString);
-                //recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
-                recordCount = EventLogHelper.SearchEventLog(TxtBoxEvtFpath.Text, searchString, writeOutputpath, filterText, boolGroupProperties, txtValueLocations.Text,chkIncludeLogSource.Checked);
-                lblResults.Text = $"{recordCount} results were returned";
-            }
-            else
-            {
-                int recordsCount = 0;
-                string[] fileEntries = Directory.GetFiles(directorypath);
-                foreach (string fileName in fileEntries)
-                {
-                    //List<EventRecord> foundRecords = EventLogHelper.SearchEventLogs(fileName, searchString);
-                    //recordCount = EventLogHelper.WriteEventRecords(foundRecords, writeOutputpath, filterText, true, boolGroupProperties);
-                    recordCount = EventLogHelper.SearchEventLog(fileName, searchString, writeOutputpath, filterText, boolGroupProperties, txtValueLocations.Text, chkIncludeLogSource.Checked);
-                    recordsCount = recordsCount + recordCount;
-                }
-                lblResults.Text = $"{recordsCount} results were returned";
-            }
-        }
+		private void btnInFilePath_Click(object sender, EventArgs e)
+		{
+			if (radioOptionFile.Checked == true)
+			{
+				OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
-        private void TxtBoxEvtFpath_TextChanged(object sender, EventArgs e)
-        {
+				openFileDialog1.InitialDirectory = lastInputDirectory;
+				openFileDialog1.Filter = "evt files (*.evt)|*.evt|evtx files (*.evtx)|*.evtx|All files (*.*)|*.*";
+				openFileDialog1.FilterIndex = 2;
+				openFileDialog1.RestoreDirectory = true;
 
-        }
+				if (openFileDialog1.ShowDialog() == DialogResult.OK)
+				{
+					txtBoxEvtFpath.Text = openFileDialog1.FileName;
+					lastInputDirectory = Path.GetDirectoryName(openFileDialog1.FileName);
+				}
+			}
+			else
+			{
+				FolderBrowserDialog folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+				folderBrowserDialog1.SelectedPath = lastInputDirectory;
+				if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
+				{
+					txtBoxEvtFpath.Text = folderBrowserDialog1.SelectedPath;
+					lastInputDirectory = Path.GetDirectoryName(folderBrowserDialog1.SelectedPath);
+				}
+			}
+		}
 
-        string lastInputDirectory = "C:\\";
-        private void btnFilePath_Click(object sender, EventArgs e)
-        {
-            if (radioFileFolder1.Checked == true)
-            {
-                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+		private void btnOutFilePath_Click(object sender, EventArgs e)
+		{
+			SaveFileDialog SaveFileDialog1 = new SaveFileDialog();
 
-                openFileDialog1.InitialDirectory = lastInputDirectory;
-                openFileDialog1.Filter = "evt files (*.evt)|*.evt|evtx files (*.evtx)|*.evtx|All files (*.*)|*.*";
-                openFileDialog1.FilterIndex = 2;
-                openFileDialog1.RestoreDirectory = true;
+			SaveFileDialog1.InitialDirectory = lastOutputDirectory;
+			SaveFileDialog1.Filter = "text files (*.txt)|*.txt|csv files (*.csv)|*.csv|All files (*.*)|*.*";
+			SaveFileDialog1.FilterIndex = 2;
+			SaveFileDialog1.RestoreDirectory = true;
 
-                if (openFileDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    TxtBoxEvtFpath.Text = openFileDialog1.FileName;
-                    lastInputDirectory = Path.GetDirectoryName(openFileDialog1.FileName);
-                }
-            }
-            else
-            {
-                FolderBrowserDialog folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
-                folderBrowserDialog1.SelectedPath = lastOutputDirectory;
-                if (folderBrowserDialog1.ShowDialog() == DialogResult.OK)
-                {
-                    TxtBoxEvtFpath.Text = folderBrowserDialog1.SelectedPath;
-                    lastOutputDirectory = Path.GetDirectoryName(folderBrowserDialog1.SelectedPath);
-                }
-            }
-        }
-
-        string lastOutputDirectory = "C:\\";
-        private void btnOutPath_Click(object sender, EventArgs e)
-        {
-            SaveFileDialog SaveFileDialog1 = new SaveFileDialog();
-
-            SaveFileDialog1.InitialDirectory = lastInputDirectory;
-            SaveFileDialog1.Filter = "text files (*.txt)|*.txt|csv files (*.csv)|*.csv|All files (*.*)|*.*";
-            SaveFileDialog1.FilterIndex = 2;
-            SaveFileDialog1.RestoreDirectory = true;
-
-            if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                TxtBoxOutput.Text = SaveFileDialog1.FileName;
-                lastInputDirectory = Path.GetDirectoryName(SaveFileDialog1.FileName);
-            }
-        }
-
-        private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-
-        }
-    }
+			if (SaveFileDialog1.ShowDialog() == DialogResult.OK)
+			{
+				txtBoxOutput.Text = SaveFileDialog1.FileName;
+				lastOutputDirectory = Path.GetDirectoryName(SaveFileDialog1.FileName);
+			}
+		}
+	}
 }
