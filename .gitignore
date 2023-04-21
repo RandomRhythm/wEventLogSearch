@@ -5,3 +5,12 @@
 /.vs
 /obj
 /bin
+
+/WELSConsole/bin
+/WELSConsole/obj
+
+/WELSCore/bin
+/WELSCore/obj
+
+/WELSearchGUI/bin
+/WELSearchGUI/obj
