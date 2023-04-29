@@ -19,6 +19,8 @@
 		<Version>$([System.DateTime]::Now.ToString("yyyy."$([System.DateTime]::Now.DayOfYear)".HHmm"))</Version>
 		<AssemblyVersion>$([System.DateTime]::Now.ToString("yyyy."$([System.DateTime]::Now.DayOfYear)".HHmm"))</AssemblyVersion>
 		<FileVersion>$([System.DateTime]::Now.ToString("yyyy."$([System.DateTime]::Now.DayOfYear)".HHmm"))</FileVersion>
+		<StartupObject>WELSearchGUI.Program</StartupObject>
+		<ProduceReferenceAssembly>False</ProduceReferenceAssembly>
 	</PropertyGroup>
 
 	<ItemGroup>
