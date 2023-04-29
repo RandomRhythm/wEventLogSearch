@@ -27,6 +27,7 @@ namespace WELSCore
 			AddToken("{g}", new Func<string>(() => DateTime.Now.ToString("g")));
 			AddToken("{G}", new Func<string>(() => DateTime.Now.ToString("G")));
 			AddToken("{m}", new Func<string>(() => DateTime.Now.ToString("m")));
+			AddToken("{o}", new Func<string>(() => DateTime.Now.ToString("o")));
 			AddToken("{r}", new Func<string>(() => DateTime.Now.ToString("r")));
 			AddToken("{s}", new Func<string>(() => DateTime.Now.ToString("s")));
 			AddToken("{t}", new Func<string>(() => DateTime.Now.ToString("t")));
@@ -34,6 +35,7 @@ namespace WELSCore
 			AddToken("{u}", new Func<string>(() => DateTime.Now.ToString("u")));
 			AddToken("{U}", new Func<string>(() => DateTime.Now.ToString("U")));
 			AddToken("{y}", new Func<string>(() => DateTime.Now.ToString("y")));
+			AddToken("{Y}", new Func<string>(() => DateTime.Now.ToString("Y")));
 		}
 
 		public static void AddToken(string search, Func<string> getReplaceTextFunction)
