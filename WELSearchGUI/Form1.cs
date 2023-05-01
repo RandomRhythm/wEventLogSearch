@@ -1,15 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
-using System.Windows.Forms;
-using System.Diagnostics.Eventing.Reader;
-using WELSCore;
+﻿using WELSCore;
 
 namespace WELSearchGUI
 {
@@ -32,9 +21,10 @@ namespace WELSearchGUI
 			{
 				LogInformationFunction = LogInformation,
 				LogErrorFunction = LogError,
+				LogExceptionFunction = Program.LogException,
 
-				InputPath = txtBoxEvtFpath.Text,
-				OutputPath = txtBoxOutput.Text,
+				InputPath = StringTokenReplace.ReplaceTokens(txtBoxEvtFpath.Text),
+				OutputPath = StringTokenReplace.ReplaceTokens(txtBoxOutput.Text),
 
 				EventIDs = txtBoxEventID.Text,
 				Filter = txtboxFilter.Text,
@@ -62,11 +52,6 @@ namespace WELSearchGUI
 			lblErrPath.Text = message;
 		}
 
-		private void LogException(string message, Exception ex)
-		{
-			LogError(message + " " + ex.ToString());
-		}
-
 		string lastInputDirectory = "C:\\";
 		string lastOutputDirectory = "C:\\";
 
@@ -80,6 +65,7 @@ namespace WELSearchGUI
 				openFileDialog1.Filter = "evt files (*.evt)|*.evt|evtx files (*.evtx)|*.evtx|All files (*.*)|*.*";
 				openFileDialog1.FilterIndex = 2;
 				openFileDialog1.RestoreDirectory = true;
+				openFileDialog1.CheckFileExists = false;
 
 				if (openFileDialog1.ShowDialog() == DialogResult.OK)
 				{

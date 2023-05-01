@@ -9,10 +9,23 @@ namespace WELSConsole
 {
 	internal class Program
 	{
+		public static string LogFilenameException = "Log.Exceptions.txt";
+		public static string LogFilenameOutput = "Log.Output.txt";
+
 		static void Main(string[] args)
 		{
 			AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
 
+			if (!string.IsNullOrWhiteSpace(Configuration.LogFile_Output))
+			{
+				LogFilenameOutput = Configuration.LogFile_Output;
+			}
+			if (!string.IsNullOrWhiteSpace(Configuration.LogFile_Exception))
+			{
+				LogFilenameException = Configuration.LogFile_Exception;
+			}
+
+			LogInformation("");
 			LogInformation($"{AppDomain.CurrentDomain.FriendlyName} executed on: {DateTime.Now.ToLongDateString()} at {DateTime.Now.ToLongTimeString()}.");
 			SearchParameters parameters = GetSearchParameters();
 			LogInformation($"Configuration acquired from {AppDomain.CurrentDomain.FriendlyName}.config. Starting Search...");
@@ -28,8 +41,8 @@ namespace WELSConsole
 				LogErrorFunction = LogError,
 				LogExceptionFunction = LogException,
 
-				InputPath = Configuration.Path_Input,
-				OutputPath = Configuration.Path_Output,
+				InputPath = StringTokenReplace.ReplaceTokens(Configuration.Path_Input),
+				OutputPath = StringTokenReplace.ReplaceTokens(Configuration.Path_Output),
 
 				EventIDs = Configuration.Search_EventIDs,
 				Filter = Configuration.Search_Filter,
@@ -52,6 +65,7 @@ namespace WELSConsole
 		private static void LogInformation(string message)
 		{
 			Console.WriteLine(message);
+			LogOutput(message);
 		}
 
 		private static void LogError(string message)
@@ -59,12 +73,23 @@ namespace WELSConsole
 			Console.ForegroundColor = ConsoleColor.Red;
 			Console.Error.WriteLine(message);
 			Console.ResetColor();
+			LogOutput(message);
+		}
+
+		private static void LogOutput(string message)
+		{
+			File.AppendAllText(LogFilenameOutput, message + Environment.NewLine);
 		}
 
 		private static void LogException(string message, Exception ex)
 		{
+			string timeStamp = $"[{DateTime.Now.ToLongDateString()} at {DateTime.Now.ToLongTimeString()}]:";
 			LogError(message);
 			LogError(ex.ToString());
+
+			File.AppendAllText(LogFilenameException, $"{timeStamp} {message}" + Environment.NewLine);
+			File.AppendAllText(LogFilenameException, $"{timeStamp} {ex}" + Environment.NewLine);
+			File.AppendAllText(LogFilenameException, Environment.NewLine);
 		}
 	}
 }

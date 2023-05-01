@@ -8,6 +8,9 @@ namespace WELSConsole
 {
 	public static class Configuration
 	{
+		public static string LogFile_Output = ConfigurationReader.GetConfigurationValue<string>("LogFile.Output") ?? "Log.Output.txt";
+		public static string LogFile_Exception = ConfigurationReader.GetConfigurationValue<string>("LogFile.Exception") ?? "Log.Exceptions.txt";
+
 		public static string Path_Input = ConfigurationReader.GetConfigurationValue<string>("Path.Input") ?? "";
 		public static string Path_Output = ConfigurationReader.GetConfigurationValue<string>("Path.Output") ?? "";
 

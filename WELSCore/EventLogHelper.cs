@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Diagnostics.Eventing.Reader;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Runtime.Serialization.Formatters.Binary;

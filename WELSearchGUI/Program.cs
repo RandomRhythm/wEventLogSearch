@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-
-namespace WELSearchGUI
+﻿namespace WELSearchGUI
 {
 	static class Program
 	{
+		public static string DefaultExceptionLogFilename = "Log.Exceptions.txt";
+
 		/// <summary>
 		/// The main entry point for the application.
 		/// </summary>
@@ -25,12 +21,24 @@ namespace WELSearchGUI
 			string message =
 				$"Global exception handler caught an exception!" +
 				Environment.NewLine +
-				"Is terminating: {e.IsTerminating}." +
-				Environment.NewLine +
-				((Exception)e.ExceptionObject).ToString();
+				"Is terminating: {e.IsTerminating}.";
 
-			MessageBox.Show(message, "Unhandled exception caught!",
+			Exception ex = ((Exception)e.ExceptionObject);
+
+			MessageBox.Show(message + Environment.NewLine +
+				ex.ToString(), "Unhandled exception caught!",
 				MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+			LogException(message, ex);
+		}
+
+		public static void LogException(string message, Exception ex)
+		{
+			string timeStamp = $"[{DateTime.Now.ToLongDateString()} at {DateTime.Now.ToLongTimeString()}]:";
+
+			File.AppendAllText(DefaultExceptionLogFilename, $"{timeStamp} {message}" + Environment.NewLine);
+			File.AppendAllText(DefaultExceptionLogFilename, $"{timeStamp} {ex}" + Environment.NewLine);
+			File.AppendAllText(DefaultExceptionLogFilename, Environment.NewLine);
 		}
 	}
 }
